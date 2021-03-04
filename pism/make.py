@@ -23,6 +23,16 @@ def main():
             'pism.alps.in.boot.nc',
             encoding={var: encoding for var in ds})
 
+    # crop 100m boot file for interpolation
+    with xr.open_dataset(
+            '~/pism/input/boot/alps.srtm.hus12.100m.nc',
+            decode_cf=False) as ds:
+        ds = ds.drop('topg')
+        ds = ds.sel(x=slice(315e3, 435e3), y=slice(5015e3, 5095e3))
+        ds.to_netcdf(
+            'pism.alps.vis.refined.nc',
+            encoding={var: encoding for var in ds})
+
     # concat 1d output in one file
     run = '~/pism/output/e9d2d1f/alpcyc4.1km.epica.1220.pp'
     run = os.path.expanduser(run)  # needed until xarray 0.17
